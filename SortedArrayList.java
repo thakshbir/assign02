@@ -63,40 +63,77 @@ public class SortedArrayList<E> implements SortedList<E> {
 		return count;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void insert(E element) 
 	{
-		if(binarySearch(element) == -1) 
+		int index = binarySearch(element);
+		if(this.array.length == this.arraySize) 
 		{
-			
+			doubleCapacity();
 		}
-			
+		for(int i = this.arraySize - 1; i > index; i--)
+		{
+			this.array[i] = this.array[ i - 1];
+		}
+		this.array[index] = element;
+	}
+
+	@Override
+	public void insertAll(Collection<? extends E> coll) 
+	{
+		for(E element : coll) 
+		{
+			insert(element);
 		}
 	}
 
 	@Override
-	public void insertAll(Collection<? extends E> coll) {
-		// TODO Auto-generated method stub
-
+	public boolean isEmpty() 
+	{
+		boolean isTrue = true;
+	for(E element : this.array) 
+	{
+		if(!(element.equals(null))) 
+		{
+			isTrue =  false;
+		}
+	}
+	isTrue =  true;
+	return isTrue;
 	}
 
 	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+	public E max() throws NoSuchElementException 
+	{
+		if(isEmpty()) 
+		{
+			throw new NoSuchElementException();
+		}
+		return array[array.length - 1];
 	}
 
 	@Override
-	public E max() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public E median() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+	public E median() throws NoSuchElementException 
+	{
+		if(isEmpty()) 
+		{
+			throw new NoSuchElementException();
+		}
+		if(array.length%2 == 1) 
+		{
+			return array[(array.length / 2) + 1];
+		}
+		else 
+		{
+			if(cmp.compare(array[array.length/2], array[(array.length/2)+1]) <= 0) 
+			{
+				return array[(array.length/2 )+ 1];
+			}
+			else 
+			{
+				return array[(array.length/2 )];
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -115,25 +152,40 @@ public class SortedArrayList<E> implements SortedList<E> {
 				high = mid - 1;
 			}
 		}
-		return -1;
+		return low;
 	}
 
 	@Override
 	public E min() throws NoSuchElementException {
-		// TODO Auto-generated method stub
-		return null;
+		return array[0];
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.arraySize;
 	}
 
 	@Override
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
+		Object[] result = new Object[array.length];
+		for(int i = 0 ; i < array.length; i++) 
+		{
+			result[i] = array[i];
+		}
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void doubleCapacity() 
+	{
+		E[] largerArray = (E[]) new Object[array.length * 2];
+
+		for(int i = 0; i < arraySize; i++) 
+		{
+			largerArray[i] = array[i];
+		}
+			array = largerArray;
+			this.arraySize *= 2;
 	}
 
 }
