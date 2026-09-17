@@ -7,53 +7,48 @@ import java.util.NoSuchElementException;
 public class SortedArrayList<E> implements SortedList<E> {
 
 	private E[] array;
-	private int arraySize; // starting size of 10
+	private int arraySize = 10; // starting size of 10
 	private Comparator<? super E> cmp;
 
 	@SuppressWarnings("unchecked")
 	public SortedArrayList() {
 		this.array = (E[]) new Object[this.arraySize];
-		this.arraySize = 0;
 		this.cmp = null; // natural ordering
 	}
 
 	@SuppressWarnings("unchecked")
 	public SortedArrayList(Comparator<? super E> cmp) {
 		this.array = (E[]) new Object[this.arraySize];
-		this.arraySize = 0;
 		this.cmp = cmp; // given ordering
 	}
 
 	@Override
 	public void clear() {
-		for (int i = 0; i < this.arraySize; i++) 
-		{
+		for (int i = 0; i < arraySize; i++) {
 			this.array[i] = null; // setting each element to 0 to denote an empty array
 		}
-		this.arraySize = 0;
+		this.arraySize = 0; // array size is 0
 	}
 
 	@Override
-	public boolean contains(E element) 
-	{
-		int index = binarySearch(element);
-		if(index< this.arraySize && compare(array[index], element) == 0) 
-		{
-			return true;
+	public boolean contains(E element) {
+		for (int i = 0; i < arraySize; i++) {
+			if (this.array[i].equals(element)) {
+				return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public boolean containsAll(Collection<? extends E> items) {
-		for (E item : items) 
-		{
-				if (!contains(item)) 
-				{
+		for (E item : items) {
+			for (E element : this.array) {
+				if (!(element.equals(item))) {
 					return false;
 				}
 			}
-		
+		}
 		return true;
 	}
 
@@ -78,10 +73,9 @@ public class SortedArrayList<E> implements SortedList<E> {
 		}
 		for(int i = this.arraySize - 1; i > index; i--)
 		{
-			this.array[i] = this.array[ i - 1];
+			this.array[i] = this.array[i - 1];
 		}
 		this.array[index] = element;
-		this.arraySize++;
 	}
 
 	@Override
@@ -96,11 +90,15 @@ public class SortedArrayList<E> implements SortedList<E> {
 	@Override
 	public boolean isEmpty() 
 	{
-		if(this.arraySize == 0) 
+		boolean isTrue = true;
+	for(E element : this.array) 
+	{
+		if(!(element.equals(null))) 
 		{
-			return true;
+			isTrue =  false;
 		}
-		return false;
+	}
+	return isTrue;
 	}
 
 	@Override
@@ -110,7 +108,7 @@ public class SortedArrayList<E> implements SortedList<E> {
 		{
 			throw new NoSuchElementException();
 		}
-		return array[this.arraySize - 1];
+		return array[array.length - 1];
 	}
 
 	@Override
@@ -120,45 +118,44 @@ public class SortedArrayList<E> implements SortedList<E> {
 		{
 			throw new NoSuchElementException();
 		}
-		if(this.arraySize % 2 == 1) 
+		if(array.length%2 == 1) 
 		{
-			return array[(this.arraySize  / 2) + 1];
+			return array[(array.length / 2) + 1];
 		}
 		else 
 		{
-			if(cmp.compare(array[this.arraySize /2], array[(this.arraySize/2)+1]) <= 0) 
+			if(cmp.compare(array[array.length/2], array[(array.length/2)+1]) <= 0) 
 			{
-				return array[this.arraySize/2+ 1];
+				return array[(array.length/2 )+ 1];
 			}
 			else 
 			{
-				return array[(this.arraySize/2 )];
+				return array[(array.length/2 )];
 			}
 		}
 	}
 
-	private int binarySearch(E target) {
-        int low = 0;
-        int high = this.arraySize;
+	@SuppressWarnings("unchecked")
+	public int binarySearch(E target) 
+	{
+		int low = 0;
+		int high = this.arraySize - 1;
+		while (low <= high) {
+			int mid = low + (high - low) / 2;
 
-        while (low < high) 
-        {
-            int mid = low + (high - low) / 2;
-
-            if (compare(array[mid], target) < 0) 
-            {
-                low = mid + 1;
-            } else 
-            {
-                high = mid;
-            }
-        }
-        return low;
-    }
+			if (this.array[mid].equals(target)) {
+				return mid; // Target found
+			} else if (((Comparable<? super E>) this.array[mid]).compareTo(target) < 0) {
+				low = mid + 1;
+			} else {
+				high = mid - 1;
+			}
+		}
+		return low;
+	}
 
 	@Override
-	public E min() throws NoSuchElementException 
-	{
+	public E min() throws NoSuchElementException {
 		if(isEmpty()) 
 		{
 			throw new NoSuchElementException();
@@ -193,16 +190,5 @@ public class SortedArrayList<E> implements SortedList<E> {
 			array = largerArray;
 			this.arraySize *= 2;
 	}
-	
-	@SuppressWarnings("unchecked")
-    private int compare(E left, E right) 
-	{
-        if (cmp != null) 
-        {
-            return cmp.compare(left, right);//if cmp is given at initialisation
-        }
-
-        return ((Comparable<? super E>) left).compareTo(right);
-    }
 
 }

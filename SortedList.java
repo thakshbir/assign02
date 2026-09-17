@@ -99,7 +99,7 @@ public interface SortedList<E> {
 	/**
 	 * Generates an array containing all of elements in this sorted list, in order.
 	 * 
-	 * @return an array containing all of elements in this sorted list
+	 * @return an array containing all of elements i n this sorted list
 	 */
 	Object[] toArray();
 }
